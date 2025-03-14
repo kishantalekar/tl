@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Link } from "react-router-dom";
 import AddTransaction from "./pages/AddTransactionPage";
 import CostCenterPage from "./pages/CostCenterPage";
 import ViewTransactions from "./pages/ViewTransaction";
+import ReportsPage from "./pages/ReportsPage";
 
 function App() {
   return (
@@ -25,7 +26,7 @@ function App() {
           <Route path="/add-transaction" element={<AddTransaction />} />
           <Route path="/view-transactions" element={<ViewTransactions />} />
           <Route path="/cost-centers" element={<CostCenterPage />} />
-          {/* <Route path="/reports" element={<ReportsPage />} /> */}
+          <Route path="/reports" element={<ReportsPage />} />
           <Route path="/" element={<AddTransaction />} />
         </Routes>
       </div>
