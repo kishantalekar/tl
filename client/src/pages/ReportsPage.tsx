@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import * as XLSX from "xlsx";
+import { utils, writeFile } from "xlsx";
 import {
   Paper,
   Table,
@@ -75,7 +75,7 @@ function ReportsPage() {
   };
 
   const exportToExcel = () => {
-    const workbook = XLSX.utils.book_new();
+    const workbook = utils.book_new();  // Change XLSX.utils to utils
 
     // Convert report data to Excel format
     const excelData = reportData.map((row) => ({
@@ -89,11 +89,11 @@ function ReportsPage() {
       "Average Amount": `₹${row.average.toFixed(2)}`,
     }));
 
-    const worksheet = XLSX.utils.json_to_sheet(excelData);
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Financial Report");
+    const worksheet = utils.json_to_sheet(excelData);  // Change XLSX.utils to utils
+    utils.book_append_sheet(workbook, worksheet, "Financial Report");  // Change XLSX.utils to utils
 
     // Generate and download the file
-    XLSX.writeFile(
+    writeFile(  // Change XLSX.writeFile to writeFile
       workbook,
       `financial_report_${groupBy}_${
         new Date().toISOString().split("T")[0]

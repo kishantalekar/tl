@@ -4,6 +4,7 @@ import AddTransaction from "./pages/AddTransactionPage";
 import CostCenterPage from "./pages/CostCenterPage";
 import ViewTransactions from "./pages/ViewTransaction";
 import ReportsPage from "./pages/ReportsPage";
+import DetailedReportPage from "./pages/DetailedReportPage";
 
 function App() {
   return (
@@ -18,7 +19,8 @@ function App() {
         <Link to="/cost-centers" style={{ marginRight: "1rem" }}>
           Cost Centers
         </Link>
-        <Link to="/reports">Reports</Link>
+        <Link to="/reports" style={{ marginRight: "1rem" }}>Summary Reports</Link>
+        <Link to="/detailed-reports">Detailed Reports</Link>
       </nav>
 
       <div style={{ padding: "2rem" }}>
@@ -27,7 +29,7 @@ function App() {
           <Route path="/view-transactions" element={<ViewTransactions />} />
           <Route path="/cost-centers" element={<CostCenterPage />} />
           <Route path="/reports" element={<ReportsPage />} />
-          <Route path="/" element={<AddTransaction />} />
+          <Route path="/detailed-reports" element={<DetailedReportPage />} />
         </Routes>
       </div>
     </Router>
