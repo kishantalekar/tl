@@ -66,6 +66,94 @@ function DetailedReportPage() {
       console.error("Error fetching transactions:", error);
     }
   };
+  const calculateExpenseStructure = (): ExpenseRow[] => {
+    const totalSales = summary.income;
+    const expenseGroups = transactions.reduce((acc, t) => {
+      acc[t.ledgerGroup] = (acc[t.ledgerGroup] || 0) + t.amount;
+      return acc;
+    }, {} as Record<string, number>);
+
+    // Calculate sub-components for Variable Expenses - Statutory
+    const statutoryComponents = transactions.reduce((acc, t) => {
+      if (t.ledgerGroup === "Variable Expenses - Statutory") {
+        acc[t.ledger] = (acc[t.ledger] || 0) + t.amount;
+      }
+      return acc;
+    }, {} as Record<string, number>);
+
+    return [
+      {
+        srno: "A",
+        details: "Sales Value",
+        amount: totalSales,
+      },
+      {
+        srno: "B",
+        details: "Fixed Expenses",
+        amount: expenseGroups["Fixed Expenses"] || 0,
+      },
+      {
+        srno: "C",
+        details: "Variable Expenses - Execution",
+        amount:
+          (expenseGroups["Variable Expenses - Material"] || 0) +
+          (expenseGroups["Variable Expenses - Sub contractor"] || 0) +
+          (expenseGroups["Variable Expenses - Operational Expenses"] || 0),
+        children: [
+          {
+            srno: "1",
+            details: "Material",
+            amount: expenseGroups["Variable Expenses - Material"] || 0,
+          },
+          {
+            srno: "2",
+            details: "Sub Contractor",
+            amount: expenseGroups["Variable Expenses - Sub contractor"] || 0,
+          },
+          {
+            srno: "3",
+            details: "Operational Expenses",
+            amount:
+              expenseGroups["Variable Expenses - Operational Expenses"] || 0,
+          },
+        ],
+      },
+      {
+        srno: "D",
+        details: "Variable Expenses - Statutory",
+        amount: expenseGroups["Variable Expenses - Statutory"] || 0,
+        children: [
+          {
+            srno: "4",
+            details: "Business Promotion",
+            amount: statutoryComponents["Business Promotion Expenses"] || 0,
+          },
+          {
+            srno: "5",
+            details: "Gem E-marketspace",
+            amount: 0, // Add actual value if available
+          },
+          {
+            srno: "6",
+            details: "CGST/SGST/IGST",
+            amount: statutoryComponents["CGST/SGST/IGST"] || 0,
+          },
+          {
+            srno: "7",
+            details: "Interest on WC - Bank OCC",
+            amount: statutoryComponents["Interest on WC - Bank OCC"] || 0,
+          },
+          {
+            srno: "8",
+            details: "Bank Charges",
+            amount:
+              statutoryComponents["Bank Charges - PG/BG/Solvency/NEFT etc"] ||
+              0,
+          },
+        ],
+      },
+    ];
+  };
 
   const calculateSummary = (): GroupSummary => {
     const summary: GroupSummary = {
@@ -143,6 +231,23 @@ function DetailedReportPage() {
   };
 
   console.log("transaction", transactions);
+
+  const renderRows = (rows: ExpenseRow[], level = 0) => {
+    return rows.flatMap((row) => [
+      <TableRow key={row.srno}>
+        <TableCell style={{ paddingLeft: `${level * 40}px` }}>
+          {row.srno}. {row.details}
+        </TableCell>
+        <TableCell align="right">₹{row.amount.toFixed(2)}</TableCell>
+        <TableCell align="right">
+          {summary.income > 0
+            ? `${((row.amount / summary.income) * 100).toFixed(2)}%`
+            : "-"}
+        </TableCell>
+      </TableRow>,
+      ...(row.children ? renderRows(row.children, level + 1) : []),
+    ]);
+  };
   return (
     <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "2rem" }}>
       <div
@@ -178,7 +283,7 @@ function DetailedReportPage() {
         </Grid>
       </LocalizationProvider>
 
-      <Grid container spacing={3}>
+      {/*  <Grid container spacing={3}>
         <Grid item xs={12}>
           <Paper style={{ padding: "1rem", marginBottom: "2rem" }}>
             <Typography variant="h6" gutterBottom>
@@ -240,6 +345,22 @@ function DetailedReportPage() {
             </TableContainer>
           </Paper>
         </Grid>
+      </Grid> */}
+      <Grid item xs={12}>
+        <Paper>
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Details</TableCell>
+                  <TableCell align="right">Amount</TableCell>
+                  <TableCell align="right">% of Sales</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>{renderRows(calculateExpenseStructure())}</TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
       </Grid>
     </div>
   );
