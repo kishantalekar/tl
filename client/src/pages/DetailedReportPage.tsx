@@ -66,7 +66,7 @@ function DetailedReportPage() {
       console.error("Error fetching transactions:", error);
     }
   };
-  const calculateExpenseStructure = (): ExpenseRow[] => {
+  const calculateExpenseStructure = () => {
     const totalSales = summary.income;
     const expenseGroups = transactions.reduce((acc, t) => {
       acc[t.ledgerGroup] = (acc[t.ledgerGroup] || 0) + t.amount;
