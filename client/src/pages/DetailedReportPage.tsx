@@ -20,6 +20,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { utils, writeFile } from "xlsx";
+import { API_URL } from "../constants";
 
 interface Transaction {
   _id: string;
@@ -43,6 +44,7 @@ function DetailedReportPage() {
   const [startDate, setStartDate] = useState<Date | null>(
     new Date(new Date().getFullYear(), new Date().getMonth(), 1)
   );
+
   const [endDate, setEndDate] = useState<Date | null>(new Date());
 
   useEffect(() => {
@@ -51,9 +53,7 @@ function DetailedReportPage() {
 
   const fetchTransactions = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:3000/api/transactions"
-      );
+      const response = await axios.get(API_URL + "/transactions");
       const filteredTransactions = response.data.filter((t: Transaction) => {
         const transactionDate = new Date(t.date);
         return (
@@ -142,6 +142,7 @@ function DetailedReportPage() {
     );
   };
 
+  console.log("transaction", transactions);
   return (
     <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "2rem" }}>
       <div

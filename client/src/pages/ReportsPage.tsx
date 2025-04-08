@@ -15,6 +15,7 @@ import {
   MenuItem,
   Button,
 } from "@mui/material";
+import { API_URL } from "../constants";
 
 interface Transaction {
   _id: string;
@@ -37,9 +38,7 @@ function ReportsPage() {
 
   const fetchTransactions = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:3000/api/transactions"
-      );
+      const response = await axios.get(API_URL + "/transactions");
       setTransactions(response.data);
     } catch (error) {
       console.error("Error fetching transactions:", error);
@@ -75,7 +74,7 @@ function ReportsPage() {
   };
 
   const exportToExcel = () => {
-    const workbook = utils.book_new();  // Change XLSX.utils to utils
+    const workbook = utils.book_new(); // Change XLSX.utils to utils
 
     // Convert report data to Excel format
     const excelData = reportData.map((row) => ({
@@ -89,11 +88,12 @@ function ReportsPage() {
       "Average Amount": `₹${row.average.toFixed(2)}`,
     }));
 
-    const worksheet = utils.json_to_sheet(excelData);  // Change XLSX.utils to utils
-    utils.book_append_sheet(workbook, worksheet, "Financial Report");  // Change XLSX.utils to utils
+    const worksheet = utils.json_to_sheet(excelData); // Change XLSX.utils to utils
+    utils.book_append_sheet(workbook, worksheet, "Financial Report"); // Change XLSX.utils to utils
 
     // Generate and download the file
-    writeFile(  // Change XLSX.writeFile to writeFile
+    writeFile(
+      // Change XLSX.writeFile to writeFile
       workbook,
       `financial_report_${groupBy}_${
         new Date().toISOString().split("T")[0]

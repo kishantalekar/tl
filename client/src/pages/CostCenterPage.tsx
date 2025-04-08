@@ -8,6 +8,7 @@ import {
   ListItemText,
   Paper,
 } from "@mui/material";
+import { API_URL } from "../constants";
 
 function CostCenterPage() {
   const [name, setName] = useState("");
@@ -18,13 +19,13 @@ function CostCenterPage() {
   }, []);
 
   const loadCostCenters = async () => {
-    const res = await axios.get("http://localhost:3000/api/cost-centers");
+    const res = await axios.get(API_URL + "/cost-centers");
     setCostCenters(res.data);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await axios.post("http://localhost:3000/api/cost-centers", { name });
+    await axios.post(API_URL + "/cost-centers", { name });
     setName("");
     loadCostCenters();
   };

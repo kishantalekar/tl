@@ -9,13 +9,14 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
+import { API_URL } from "../constants";
 
 function ViewTransactions() {
   const [transactions, setTransactions] = useState([]);
 
   useEffect(() => {
     const fetchTransactions = async () => {
-      const res = await axios.get("http://localhost:3000/api/transactions");
+      const res = await axios.get(API_URL + "/transactions");
       setTransactions(res.data);
     };
     fetchTransactions();

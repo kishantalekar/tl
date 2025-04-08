@@ -8,6 +8,7 @@ import {
   FormControl,
   InputLabel,
 } from "@mui/material";
+import { API_URL } from "../constants";
 
 const ledgerGroups = {
   "Sales Account": ["Sales"],
@@ -64,7 +65,6 @@ const ledgerGroups = {
     "Bank Charges - PG/BG/Solvency/NEFT etc",
   ],
 };
-
 function AddTransaction() {
   const [formData, setFormData] = useState({
     date: new Date().toISOString().split("T")[0],
@@ -74,9 +74,8 @@ function AddTransaction() {
     amount: "",
   });
   const [costCenters, setCostCenters] = useState([]);
-
   useEffect(() => {
-    axios.get("http://localhost:3000/api/cost-centers").then((res) => {
+    axios.get(API_URL + "/cost-centers").then((res) => {
       if (res.status === 200) {
         console.log("dsl", res.data);
         return setCostCenters(res.data);
@@ -87,7 +86,7 @@ function AddTransaction() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:3000/api/transactions", formData);
+      await axios.post(API_URL + "/transactions", formData);
       alert("Transaction added successfully!");
       setFormData({
         ...formData,
