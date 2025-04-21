@@ -25,7 +25,14 @@ router.post("/", async (req, res) => {
 // Get All Transactions
 router.get("/", async (req, res) => {
   try {
-    const transactions = await Transaction.find()
+    const { costCenter } = req.query;
+    const query = {};
+
+    if (costCenter) {
+      query.costCenter = costCenter;
+    }
+
+    const transactions = await Transaction.find(query)
       .populate("costCenter", "name")
       .sort({ date: -1 });
 

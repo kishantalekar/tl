@@ -41,27 +41,36 @@ interface GroupSummary {
 
 function DetailedReportPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [costCenters, setCostCenters] = useState([]);
+  const [selectedCostCenter, setSelectedCostCenter] = useState<string>("");
   const [startDate, setStartDate] = useState<Date | null>(
     new Date(new Date().getFullYear(), new Date().getMonth(), 1)
   );
-
   const [endDate, setEndDate] = useState<Date | null>(new Date());
 
   useEffect(() => {
+    fetchCostCenters();
     fetchTransactions();
-  }, [startDate, endDate]);
+  }, [startDate, endDate, selectedCostCenter]);
+
+  const fetchCostCenters = async () => {
+    try {
+      const response = await axios.get(API_URL + "/cost-centers");
+      setCostCenters(response.data);
+    } catch (error) {
+      console.error("Error fetching cost centers:", error);
+    }
+  };
 
   const fetchTransactions = async () => {
     try {
-      const response = await axios.get(API_URL + "/transactions");
-      const filteredTransactions = response.data.filter((t: Transaction) => {
-        const transactionDate = new Date(t.date);
-        return (
-          (!startDate || transactionDate >= startDate) &&
-          (!endDate || transactionDate <= endDate)
-        );
-      });
-      setTransactions(filteredTransactions);
+      const params = {
+        costCenter: selectedCostCenter || undefined,
+      };
+
+      const response = await axios.get(API_URL + "/transactions", { params });
+      // Remove client-side date filtering since backend should handle it
+      setTransactions(response.data);
     } catch (error) {
       console.error("Error fetching transactions:", error);
     }
@@ -230,8 +239,6 @@ function DetailedReportPage() {
     );
   };
 
-  console.log("transaction", transactions);
-
   const renderRows = (rows: ExpenseRow[], level = 0) => {
     return rows.flatMap((row) => [
       <TableRow key={row.srno}>
@@ -266,19 +273,41 @@ function DetailedReportPage() {
 
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <Grid container spacing={2} style={{ marginBottom: "2rem" }}>
-          <Grid item xs={6}>
+          <Grid item xs={4}>
             <DatePicker
               label="Start Date"
               value={startDate}
               onChange={setStartDate}
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={4}>
             <DatePicker
               label="End Date"
               value={endDate}
               onChange={setEndDate}
             />
+          </Grid>
+          <Grid item xs={4}>
+            <FormControl fullWidth>
+              <InputLabel>Cost Center</InputLabel>
+              <Select
+                value={selectedCostCenter}
+                onChange={(e) => {
+                  console.log("hell", e.target.value);
+                  return setSelectedCostCenter(
+                    e.target.value ?? ("" as string)
+                  );
+                }}
+                label="Cost Center"
+              >
+                <MenuItem value="">All Cost Centers</MenuItem>
+                {costCenters.map((center) => (
+                  <MenuItem key={center._id} value={center._id}>
+                    {center.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
         </Grid>
       </LocalizationProvider>
