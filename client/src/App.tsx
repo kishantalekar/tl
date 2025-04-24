@@ -129,6 +129,7 @@ function App() {
 
       <div style={{ padding: "2rem" }}>
         <Routes>
+          <Route path="/" element={<AddTransaction />} />
           <Route path="/add-transaction" element={<AddTransaction />} />
           <Route path="/view-transactions" element={<ViewTransactions />} />
           <Route path="/cost-centers" element={<CostCenterPage />} />
