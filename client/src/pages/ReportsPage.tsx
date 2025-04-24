@@ -14,6 +14,8 @@ import {
   Select,
   MenuItem,
   Button,
+  CircularProgress,
+  Typography,
 } from "@mui/material";
 import { API_URL } from "../constants";
 
@@ -31,6 +33,7 @@ function ReportsPage() {
   const [groupBy, setGroupBy] = useState<
     "ledgerGroup" | "costCenter" | "ledger"
   >("ledgerGroup");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     fetchTransactions();
@@ -38,10 +41,13 @@ function ReportsPage() {
 
   const fetchTransactions = async () => {
     try {
+      setIsLoading(true);
       const response = await axios.get(API_URL + "/transactions");
       setTransactions(response.data);
     } catch (error) {
       console.error("Error fetching transactions:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -104,7 +110,15 @@ function ReportsPage() {
   const reportData = generateReport();
 
   return (
-    <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "2rem" }}>
+    <div
+      style={{
+        maxWidth: "1400px",
+        margin: "0 auto",
+        padding: "2rem",
+        backgroundColor: "#f9f9f9",
+        minHeight: "100vh",
+      }}
+    >
       <div
         style={{
           display: "flex",
@@ -113,7 +127,20 @@ function ReportsPage() {
           marginBottom: "2rem",
         }}
       >
-        <h2>Financial Reports</h2>
+        <Typography
+          variant="h4"
+          component="h1"
+          gutterBottom
+          sx={{
+            color: "#1976d2",
+            fontWeight: 600,
+            marginBottom: "2rem",
+            paddingBottom: "1rem",
+            borderBottom: "1px solid #e0e0e0",
+          }}
+        >
+          Financial Reports
+        </Typography>
         <Button
           variant="contained"
           color="primary"
@@ -140,31 +167,86 @@ function ReportsPage() {
         </Select>
       </FormControl>
 
-      <TableContainer component={Paper}>
-        <Table>
+      <TableContainer
+        component={Paper}
+        elevation={3}
+        sx={{
+          marginTop: "2rem",
+          borderRadius: "12px",
+          marginBottom: "2rem",
+          "& .MuiTableCell-root": {
+            fontSize: "0.95rem",
+          },
+          "& .MuiTableCell-head": {
+            fontWeight: 600,
+            backgroundColor: "#1976d2",
+            color: "white",
+          },
+        }}
+      >
+        <Table stickyHeader>
+          <colgroup>
+            <col style={{ width: "40%" }} />
+            <col style={{ width: "20%" }} />
+            <col style={{ width: "20%" }} />
+            <col style={{ width: "20%" }} />
+          </colgroup>
           <TableHead>
             <TableRow>
-              <TableCell>
+              <TableCell
+                sx={{ fontSize: "1.1rem", fontWeight: 600, padding: 3 }}
+              >
                 {groupBy === "costCenter"
                   ? "Cost Center"
                   : groupBy === "ledger"
                   ? "Ledger"
                   : "Ledger Group"}
               </TableCell>
-              <TableCell align="right">Total Amount</TableCell>
-              <TableCell align="right">Number of Transactions</TableCell>
-              <TableCell align="right">Average Amount</TableCell>
+              <TableCell
+                sx={{ fontSize: "1.1rem", fontWeight: 600, padding: 3 }}
+                align="right"
+              >
+                Total Amount
+              </TableCell>
+              <TableCell
+                sx={{ fontSize: "1.1rem", fontWeight: 600, padding: 3 }}
+                align="right"
+              >
+                Transactions
+              </TableCell>
+              <TableCell
+                sx={{ fontSize: "1.1rem", fontWeight: 600, padding: 3 }}
+                align="right"
+              >
+                Average
+              </TableCell>
             </TableRow>
           </TableHead>
-          <TableBody>
-            {reportData.map((row) => (
-              <TableRow key={row.category}>
-                <TableCell>{row.category}</TableCell>
-                <TableCell align="right">₹{row.total.toFixed(2)}</TableCell>
-                <TableCell align="right">{row.count}</TableCell>
-                <TableCell align="right">₹{row.average.toFixed(2)}</TableCell>
+          <TableBody
+            sx={{ "& tr:nth-of-type(even)": { backgroundColor: "#f5f5f5" } }}
+          >
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={4} align="center" sx={{ py: 4 }}>
+                  <CircularProgress />
+                </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              reportData.map((row) => (
+                <TableRow key={row.category}>
+                  <TableCell sx={{ padding: 2 }}>{row.category}</TableCell>
+                  <TableCell sx={{ padding: 2 }} align="right">
+                    ₹{row.total.toFixed(2)}
+                  </TableCell>
+                  <TableCell sx={{ padding: 2 }} align="right">
+                    {row.count}
+                  </TableCell>
+                  <TableCell sx={{ padding: 2 }} align="right">
+                    ₹{row.average.toFixed(2)}
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </TableContainer>

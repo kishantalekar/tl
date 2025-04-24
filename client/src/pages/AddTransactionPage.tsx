@@ -7,6 +7,9 @@ import {
   Select,
   FormControl,
   InputLabel,
+  Paper,
+  Typography,
+  CircularProgress,
 } from "@mui/material";
 import { API_URL } from "../constants";
 
@@ -101,101 +104,158 @@ function AddTransaction() {
   };
   console.log(costCenters);
   return (
-    <form
-      onSubmit={handleSubmit}
-      style={{ maxWidth: "600px", margin: "0 auto" }}
-    >
-      <h2>Add New Transaction</h2>
-
-      <TextField
-        fullWidth
-        type="date"
-        label="Date"
-        value={formData.date}
-        onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-        margin="normal"
-        required
-      />
-
-      <FormControl fullWidth margin="normal" required>
-        <InputLabel>Ledger Group</InputLabel>
-        <Select
-          value={formData.ledgerGroup}
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              ledgerGroup: e.target.value,
-              ledger: "",
-            })
-          }
-        >
-          <MenuItem value="">
-            <em>Select Group</em>
-          </MenuItem>
-          {Object.keys(ledgerGroups).map((group) => (
-            <MenuItem key={group} value={group}>
-              {group}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-
-      <FormControl fullWidth margin="normal" required>
-        <InputLabel>Ledger</InputLabel>
-        <Select
-          value={formData.ledger}
-          onChange={(e) => setFormData({ ...formData, ledger: e.target.value })}
-          disabled={!formData.ledgerGroup}
-        >
-          <MenuItem value="">
-            <em>Select Ledger</em>
-          </MenuItem>
-          {formData.ledgerGroup &&
-            ledgerGroups[formData.ledgerGroup].map((ledger) => (
-              <MenuItem key={ledger} value={ledger}>
-                {ledger}
-              </MenuItem>
-            ))}
-        </Select>
-      </FormControl>
-
-      <FormControl fullWidth margin="normal" required>
-        <InputLabel>Cost Center</InputLabel>
-        <Select
-          value={formData.costCenter}
-          onChange={(e) =>
-            setFormData({ ...formData, costCenter: e.target.value })
-          }
-        >
-          {costCenters &&
-            costCenters?.map((cc) => (
-              <MenuItem key={cc._id} value={cc._id}>
-                {cc.name}
-              </MenuItem>
-            ))}
-        </Select>
-      </FormControl>
-
-      <TextField
-        fullWidth
-        type="number"
-        label="Amount"
-        value={formData.amount}
-        onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-        margin="normal"
-        required
-        inputProps={{ step: "0.01" }}
-      />
-
-      <Button
-        variant="contained"
-        color="primary"
-        type="submit"
-        style={{ marginTop: "1rem" }}
+    <div style={{ maxWidth: "800px", margin: "0 auto", padding: "2rem" }}>
+      <Typography
+        variant="h4"
+        component="h1"
+        gutterBottom
+        sx={{
+          color: "#1976d2",
+          fontWeight: 600,
+          marginBottom: "2rem",
+          paddingBottom: "1rem",
+          borderBottom: "1px solid #e0e0e0",
+        }}
       >
-        Submit Transaction
-      </Button>
-    </form>
+        Add New Transaction
+      </Typography>
+      <Paper elevation={3} sx={{ padding: "2rem", borderRadius: "12px" }}>
+        <form onSubmit={handleSubmit}>
+          <TextField
+            fullWidth
+            type="date"
+            label="Date"
+            value={formData.date}
+            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+            margin="normal"
+            required
+            sx={{ marginBottom: 2 }}
+          />
+
+          <FormControl
+            fullWidth
+            margin="normal"
+            required
+            sx={{ marginBottom: 2 }}
+          >
+            <InputLabel>Ledger Group</InputLabel>
+            <Select
+              value={formData.ledgerGroup}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  ledgerGroup: e.target.value,
+                  ledger: "",
+                })
+              }
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 300,
+                  },
+                },
+              }}
+            >
+              <MenuItem value="">
+                <em>Select Group</em>
+              </MenuItem>
+              {Object.keys(ledgerGroups).map((group) => (
+                <MenuItem key={group} value={group}>
+                  {group}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+
+          <FormControl
+            fullWidth
+            margin="normal"
+            required
+            sx={{ marginBottom: 2 }}
+          >
+            <InputLabel>Ledger</InputLabel>
+            <Select
+              value={formData.ledger}
+              onChange={(e) =>
+                setFormData({ ...formData, ledger: e.target.value })
+              }
+              disabled={!formData.ledgerGroup}
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 300,
+                  },
+                },
+              }}
+            >
+              <MenuItem value="">
+                <em>Select Ledger</em>
+              </MenuItem>
+              {formData.ledgerGroup &&
+                ledgerGroups[formData.ledgerGroup].map((ledger) => (
+                  <MenuItem key={ledger} value={ledger}>
+                    {ledger}
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
+
+          <FormControl
+            fullWidth
+            margin="normal"
+            required
+            sx={{ marginBottom: 2 }}
+          >
+            <InputLabel>Cost Center</InputLabel>
+            <Select
+              value={formData.costCenter}
+              onChange={(e) =>
+                setFormData({ ...formData, costCenter: e.target.value })
+              }
+              MenuProps={{
+                PaperProps: {
+                  style: {
+                    maxHeight: 300,
+                  },
+                },
+              }}
+            >
+              {costCenters &&
+                costCenters?.map((cc) => (
+                  <MenuItem key={cc._id} value={cc._id}>
+                    {cc.name}
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
+
+          <TextField
+            fullWidth
+            type="number"
+            label="Amount"
+            value={formData.amount}
+            onChange={(e) =>
+              setFormData({ ...formData, amount: e.target.value })
+            }
+            margin="normal"
+            required
+            inputProps={{ step: "0.01" }}
+            sx={{ marginBottom: 2 }}
+          />
+
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            fullWidth
+            size="large"
+            sx={{ marginTop: "2rem", padding: "1rem" }}
+          >
+            Submit Transaction
+          </Button>
+        </form>
+      </Paper>
+    </div>
   );
 }
 

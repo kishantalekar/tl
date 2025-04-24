@@ -9,18 +9,103 @@ import DetailedReportPage from "./pages/DetailedReportPage";
 function App() {
   return (
     <Router>
-      <nav style={{ padding: "1rem", background: "#f0f0f0" }}>
-        <Link to="/add-transaction" style={{ marginRight: "1rem" }}>
+      <nav
+        style={{
+          padding: "1rem",
+          background: "#1976d2",
+          boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+          marginBottom: "2rem",
+        }}
+      >
+        <Link
+          to="/add-transaction"
+          style={{
+            marginRight: "2rem",
+            color: "white",
+            textDecoration: "none",
+            fontWeight: 500,
+            fontSize: "1rem",
+            padding: "0.5rem 1rem",
+            borderRadius: "4px",
+            transition: "background-color 0.3s",
+            "&:hover": {
+              backgroundColor: "rgba(255,255,255,0.2)",
+            },
+          }}
+        >
           Add Transaction
         </Link>
-        <Link to="/view-transactions" style={{ marginRight: "1rem" }}>
+        <Link
+          to="/view-transactions"
+          style={{
+            marginRight: "2rem",
+            color: "white",
+            textDecoration: "none",
+            fontWeight: 500,
+            fontSize: "1rem",
+            padding: "0.5rem 1rem",
+            borderRadius: "4px",
+            transition: "background-color 0.3s",
+            "&:hover": {
+              backgroundColor: "rgba(255,255,255,0.2)",
+            },
+          }}
+        >
           View Transactions
         </Link>
-        <Link to="/cost-centers" style={{ marginRight: "1rem" }}>
+        <Link
+          to="/cost-centers"
+          style={{
+            marginRight: "2rem",
+            color: "white",
+            textDecoration: "none",
+            fontWeight: 500,
+            fontSize: "1rem",
+            padding: "0.5rem 1rem",
+            borderRadius: "4px",
+            transition: "background-color 0.3s",
+            "&:hover": {
+              backgroundColor: "rgba(255,255,255,0.2)",
+            },
+          }}
+        >
           Cost Centers
         </Link>
-        <Link to="/reports" style={{ marginRight: "1rem" }}>Summary Reports</Link>
-        <Link to="/detailed-reports">Detailed Reports</Link>
+        <Link
+          to="/reports"
+          style={{
+            marginRight: "2rem",
+            color: "white",
+            textDecoration: "none",
+            fontWeight: 500,
+            fontSize: "1rem",
+            padding: "0.5rem 1rem",
+            borderRadius: "4px",
+            transition: "background-color 0.3s",
+            "&:hover": {
+              backgroundColor: "rgba(255,255,255,0.2)",
+            },
+          }}
+        >
+          Summary Reports
+        </Link>
+        <Link
+          to="/detailed-reports"
+          style={{
+            color: "white",
+            textDecoration: "none",
+            fontWeight: 500,
+            fontSize: "1rem",
+            padding: "0.5rem 1rem",
+            borderRadius: "4px",
+            transition: "background-color 0.3s",
+            "&:hover": {
+              backgroundColor: "rgba(255,255,255,0.2)",
+            },
+          }}
+        >
+          Detailed Reports
+        </Link>
       </nav>
 
       <div style={{ padding: "2rem" }}>

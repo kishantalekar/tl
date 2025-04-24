@@ -15,6 +15,7 @@ import {
   Button,
   Grid,
   Typography,
+  CircularProgress,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -43,6 +44,7 @@ function DetailedReportPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [costCenters, setCostCenters] = useState([]);
   const [selectedCostCenter, setSelectedCostCenter] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
   const [startDate, setStartDate] = useState<Date | null>(
     new Date(new Date().getFullYear(), new Date().getMonth(), 1)
   );
@@ -64,6 +66,7 @@ function DetailedReportPage() {
 
   const fetchTransactions = async () => {
     try {
+      setIsLoading(true);
       const params = {
         costCenter: selectedCostCenter || undefined,
       };
@@ -73,6 +76,8 @@ function DetailedReportPage() {
       setTransactions(response.data);
     } catch (error) {
       console.error("Error fetching transactions:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
   const calculateExpenseStructure = () => {
@@ -256,7 +261,15 @@ function DetailedReportPage() {
     ]);
   };
   return (
-    <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "2rem" }}>
+    <div
+      style={{
+        maxWidth: "1400px",
+        margin: "0 auto",
+        padding: "2rem",
+        backgroundColor: "#f9f9f9",
+        minHeight: "100vh",
+      }}
+    >
       <div
         style={{
           display: "flex",
@@ -265,7 +278,20 @@ function DetailedReportPage() {
           marginBottom: "2rem",
         }}
       >
-        <Typography variant="h4">Detailed Financial Report</Typography>
+        <Typography
+          variant="h4"
+          component="h1"
+          gutterBottom
+          sx={{
+            color: "#1976d2",
+            fontWeight: 600,
+            marginBottom: "2rem",
+            paddingBottom: "1rem",
+            borderBottom: "1px solid #e0e0e0",
+          }}
+        >
+          Detailed Financial Report
+        </Typography>
         <Button variant="contained" color="primary" onClick={exportToExcel}>
           Export to Excel
         </Button>
@@ -377,16 +403,70 @@ function DetailedReportPage() {
       </Grid> */}
       <Grid item xs={12}>
         <Paper>
-          <TableContainer>
-            <Table>
+          <TableContainer
+            component={Paper}
+            elevation={3}
+            sx={{
+              marginTop: "2rem",
+              borderRadius: "12px",
+              marginBottom: "2rem",
+              "& .MuiTableCell-root": {
+                fontSize: "0.95rem",
+              },
+              "& .MuiTableCell-head": {
+                fontWeight: 600,
+                backgroundColor: "#1976d2",
+                color: "white",
+              },
+            }}
+          >
+            <Table stickyHeader>
+              <colgroup>
+                <col style={{ width: "60%" }} />
+                <col style={{ width: "20%" }} />
+                <col style={{ width: "20%" }} />
+              </colgroup>
               <TableHead>
-                <TableRow>
-                  <TableCell>Details</TableCell>
-                  <TableCell align="right">Amount</TableCell>
-                  <TableCell align="right">% of Sales</TableCell>
+                <TableRow
+                  sx={{
+                    "& th": { backgroundColor: "#1976d2", color: "white" },
+                  }}
+                >
+                  <TableCell
+                    sx={{ fontSize: "1.2rem", fontWeight: 700, padding: 3 }}
+                  >
+                    Details
+                  </TableCell>
+                  <TableCell
+                    sx={{ fontSize: "1.2rem", fontWeight: 700, padding: 3 }}
+                    align="right"
+                  >
+                    Amount
+                  </TableCell>
+                  <TableCell
+                    sx={{ fontSize: "1.2rem", fontWeight: 700, padding: 3 }}
+                    align="right"
+                  >
+                    % of Sales
+                  </TableCell>
                 </TableRow>
               </TableHead>
-              <TableBody>{renderRows(calculateExpenseStructure())}</TableBody>
+              <TableBody
+                sx={{
+                  "& tr:nth-of-type(even)": { backgroundColor: "#f9f9f9" },
+                  "& tr:hover": { backgroundColor: "#f0f7ff" },
+                }}
+              >
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={3} align="center" sx={{ py: 4 }}>
+                      <CircularProgress />
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  renderRows(calculateExpenseStructure())
+                )}
+              </TableBody>
             </Table>
           </TableContainer>
         </Paper>

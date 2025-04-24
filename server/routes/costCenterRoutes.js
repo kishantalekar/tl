@@ -24,4 +24,29 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Update Cost Center
+router.put("/:id", async (req, res) => {
+  try {
+    const { name } = req.body;
+    const updatedCostCenter = await CostCenter.findByIdAndUpdate(
+      req.params.id,
+      { name },
+      { new: true }
+    );
+    res.json(updatedCostCenter);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// Delete Cost Center
+router.delete("/:id", async (req, res) => {
+  try {
+    await CostCenter.findByIdAndDelete(req.params.id);
+    res.json({ message: "Cost center deleted successfully" });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 module.exports = router;
