@@ -247,7 +247,7 @@ function DetailedReportPage() {
   const renderRows = (rows: ExpenseRow[], level = 0) => {
     return rows.flatMap((row) => [
       <TableRow key={row.srno}>
-        <TableCell style={{ paddingLeft: `${level * 40}px` }}>
+        <TableCell style={{ paddingLeft: `${level * 20}px` }}>
           {row.srno}. {row.details}
         </TableCell>
         <TableCell align="right">₹{row.amount.toFixed(2)}</TableCell>
@@ -464,7 +464,7 @@ function DetailedReportPage() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  renderRows(calculateExpenseStructure())
+                  renderRows(calculateExpenseStructure(), 1)
                 )}
               </TableBody>
             </Table>
