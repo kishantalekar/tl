@@ -260,6 +260,56 @@ function DetailedReportPage() {
       ...(row.children ? renderRows(row.children, level + 1) : []),
     ]);
   };
+  const calculateProjectSummary = () => {
+    const expenseGroups = transactions.reduce((acc, t) => {
+      acc[t.ledgerGroup] = (acc[t.ledgerGroup] || 0) + t.amount;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const salesValue = summary.income;
+    const fixedExpenses = expenseGroups["Fixed Expenses"] || 0;
+    const variableExpensesExecution =
+      (expenseGroups["Variable Expenses - Material"] || 0) +
+      (expenseGroups["Variable Expenses - Sub contractor"] || 0) +
+      (expenseGroups["Variable Expenses - Operational Expenses"] || 0);
+    const variableExpensesStatutory =
+      expenseGroups["Variable Expenses - Statutory"] || 0;
+    const totalExpenses =
+      fixedExpenses + variableExpensesExecution + variableExpensesStatutory;
+    const grossProfit = salesValue - totalExpenses;
+    const directorRemuneration = grossProfit * 0.1;
+    const corporateTax = (grossProfit - directorRemuneration) * 0.3;
+    const netProfit = grossProfit - directorRemuneration - corporateTax;
+
+    return [
+      { srno: "A", details: "Sales Value", amount: salesValue },
+      { srno: "B", details: "Fixed Expenses", amount: fixedExpenses },
+      {
+        srno: "C",
+        details: "Variable Expenses - Execution",
+        amount: variableExpensesExecution,
+      },
+      {
+        srno: "D",
+        details: "Variable Expenses - Statutory",
+        amount: variableExpensesStatutory,
+      },
+      { srno: "E", details: "Total Expenses (B+C+D)", amount: totalExpenses },
+      { srno: "F", details: "Gross Profit (A-E)", amount: grossProfit },
+      {
+        srno: "G",
+        details: "Director Remuneration @10% on Gross Profit",
+        amount: directorRemuneration,
+      },
+      {
+        srno: "H",
+        details: "Corporate Tax 30% on (F-G)",
+        amount: corporateTax,
+      },
+      { srno: "I", details: "Net Profit (F-G-H)", amount: netProfit },
+    ];
+  };
+
   return (
     <div
       style={{
@@ -465,6 +515,77 @@ function DetailedReportPage() {
                   </TableRow>
                 ) : (
                   renderRows(calculateExpenseStructure(), 1)
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
+      </Grid>
+
+      <Grid item xs={12}>
+        <Paper>
+          <TableContainer
+            component={Paper}
+            elevation={3}
+            sx={{
+              marginTop: "2rem",
+              borderRadius: "12px",
+              marginBottom: "2rem",
+              "& .MuiTableCell-root": {
+                fontSize: "0.95rem",
+              },
+              "& .MuiTableCell-head": {
+                fontWeight: 600,
+                backgroundColor: "#1976d2",
+                color: "white",
+              },
+            }}
+          >
+            <Table stickyHeader>
+              <colgroup>
+                <col style={{ width: "60%" }} />
+                <col style={{ width: "20%" }} />
+                <col style={{ width: "20%" }} />
+              </colgroup>
+              <TableHead>
+                <TableRow
+                  sx={{
+                    "& th": { backgroundColor: "#1976d2", color: "white" },
+                  }}
+                >
+                  <TableCell
+                    sx={{ fontSize: "1.2rem", fontWeight: 700, padding: 3 }}
+                  >
+                    Project Summary
+                  </TableCell>
+                  <TableCell
+                    sx={{ fontSize: "1.2rem", fontWeight: 700, padding: 3 }}
+                    align="right"
+                  >
+                    Amount
+                  </TableCell>
+                  <TableCell
+                    sx={{ fontSize: "1.2rem", fontWeight: 700, padding: 3 }}
+                    align="right"
+                  >
+                    % of Sales
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody
+                sx={{
+                  "& tr:nth-of-type(even)": { backgroundColor: "#f9f9f9" },
+                  "& tr:hover": { backgroundColor: "#f0f7ff" },
+                }}
+              >
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={3} align="center" sx={{ py: 4 }}>
+                      <CircularProgress />
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  renderRows(calculateProjectSummary(), 1)
                 )}
               </TableBody>
             </Table>
