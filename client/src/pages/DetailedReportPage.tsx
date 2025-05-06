@@ -340,7 +340,7 @@ function DetailedReportPage() {
             borderBottom: "1px solid #e0e0e0",
           }}
         >
-          NIRAKAR ENGINEERING PRIVATE LIMITED PROJECT BUDGET
+          NIRAKAR ENGINEERING PRIVATE LIMITED <br /> PROJECT BUDGET
         </Typography>
         <Button variant="contained" color="primary" onClick={exportToExcel}>
           Export to Excel
