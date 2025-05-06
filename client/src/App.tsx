@@ -89,24 +89,7 @@ function App() {
           >
             Cost Centers
           </Link>
-          <Link
-            to="/reports"
-            style={{
-              marginRight: "2rem",
-              color: "white",
-              textDecoration: "none",
-              fontWeight: 500,
-              fontSize: "1rem",
-              padding: "0.5rem 1rem",
-              borderRadius: "4px",
-              transition: "background-color 0.3s",
-              "&:hover": {
-                backgroundColor: "rgba(255,255,255,0.2)",
-              },
-            }}
-          >
-            Summary Reports
-          </Link>
+
           <Link
             to="/detailed-reports"
             style={{
