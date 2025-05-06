@@ -5,7 +5,7 @@ import CostCenterPage from "./pages/CostCenterPage";
 import ViewTransactions from "./pages/ViewTransaction";
 import ReportsPage from "./pages/ReportsPage";
 import DetailedReportPage from "./pages/DetailedReportPage";
-import logo from "./assets/logo.png"; // Import the logo
+import logo from "./assets/logo1.png"; // Import the logo
 
 function App() {
   return (
