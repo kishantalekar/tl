@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import {
   Paper,
@@ -16,11 +16,13 @@ import {
   Grid,
   Typography,
   CircularProgress,
+  Stack,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { utils, writeFile } from "xlsx";
+import { useReactToPrint } from "react-to-print";
 import { API_URL } from "../constants";
 
 interface Transaction {
@@ -32,6 +34,13 @@ interface Transaction {
   amount: number;
 }
 
+interface ExpenseRow {
+  srno: string;
+  details: string;
+  amount: number;
+  children?: ExpenseRow[];
+}
+
 interface GroupSummary {
   income: number;
   expenses: number;
@@ -41,14 +50,18 @@ interface GroupSummary {
 }
 
 function DetailedReportPage() {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [costCenters, setCostCenters] = useState([]);
+  const componentRef = useRef<HTMLDivElement>(null);
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
   const [selectedCostCenter, setSelectedCostCenter] = useState<string>("");
+  const [costCenters, setCostCenters] = useState<any[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [startDate, setStartDate] = useState<Date | null>(
-    new Date(new Date().getFullYear(), new Date().getMonth(), 1)
-  );
-  const [endDate, setEndDate] = useState<Date | null>(new Date());
+
+  const handlePrint = useReactToPrint({
+    contentRef: componentRef,
+    documentTitle: `Financial Report ${startDate?.toLocaleDateString()} - ${endDate?.toLocaleDateString()}`,
+  });
 
   useEffect(() => {
     fetchCostCenters();
@@ -361,6 +374,7 @@ function DetailedReportPage() {
 
   return (
     <div
+      ref={componentRef}
       style={{
         maxWidth: "1400px",
         margin: "0 auto",
@@ -391,9 +405,14 @@ function DetailedReportPage() {
         >
           NIRAKAR ENGINEERING PRIVATE LIMITED <br /> PROJECT BUDGET
         </Typography>
-        <Button variant="contained" color="primary" onClick={exportToExcel}>
-          Export to Excel
-        </Button>
+        <Stack direction="row" spacing={2}>
+          <Button variant="contained" color="primary" onClick={exportToExcel}>
+            Export to Excel
+          </Button>
+          <Button variant="contained" color="primary" onClick={handlePrint}>
+            Print Report
+          </Button>
+        </Stack>
       </div>
 
       <LocalizationProvider dateAdapter={AdapterDateFns}>
