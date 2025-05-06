@@ -220,8 +220,58 @@ function DetailedReportPage() {
       ]),
     ];
 
-    const ws = utils.aoa_to_sheet(summaryData); // Change XLSX.utils to utils
-    utils.book_append_sheet(workbook, ws, "Summary"); // Change XLSX.utils to utils
+    const ws = utils.aoa_to_sheet(summaryData);
+    utils.book_append_sheet(workbook, ws, "Summary");
+
+    // Expense Structure Sheet
+    const expenseStructure = calculateExpenseStructure();
+    const expenseStructureData = [
+      ["Expense Structure", "", ""],
+      ["Details", "Amount", "% of Sales"],
+      ...expenseStructure.flatMap((row) => {
+        const rows = [
+          [
+            `${row.srno}. ${row.details}`,
+            `₹${row.amount.toFixed(2)}`,
+            summary.income > 0
+              ? `${((row.amount / summary.income) * 100).toFixed(2)}%`
+              : "-",
+          ],
+        ];
+        if (row.children) {
+          rows.push(
+            ...row.children.map((child) => [
+              `    ${child.srno}. ${child.details}`,
+              `₹${child.amount.toFixed(2)}`,
+              summary.income > 0
+                ? `${((child.amount / summary.income) * 100).toFixed(2)}%`
+                : "-",
+            ])
+          );
+        }
+        return rows;
+      }),
+    ];
+
+    const ws2 = utils.aoa_to_sheet(expenseStructureData);
+    utils.book_append_sheet(workbook, ws2, "Expense Structure");
+
+    // Project Summary Sheet
+    const projectSummary = calculateProjectSummary();
+    const projectSummaryData = [
+      ["Project Summary", "", ""],
+      ["Details", "Amount", "% of Sales"],
+      ...projectSummary.map((row) => [
+        `${row.srno}. ${row.details}`,
+        `₹${row.amount.toFixed(2)}`,
+        summary.income > 0
+          ? `${((row.amount / summary.income) * 100).toFixed(2)}%`
+          : "-",
+      ]),
+    ];
+
+    const ws3 = utils.aoa_to_sheet(projectSummaryData);
+    utils.book_append_sheet(workbook, ws3, "Project Summary");
 
     // Detailed Transactions Sheet
     const detailedData = transactions.map((t) => ({
@@ -232,11 +282,10 @@ function DetailedReportPage() {
       Amount: `₹${t.amount.toFixed(2)}`,
     }));
 
-    const ws2 = utils.json_to_sheet(detailedData); // Change XLSX.utils to utils
-    utils.book_append_sheet(workbook, ws2, "Detailed Transactions"); // Change XLSX.utils to utils
+    const ws4 = utils.json_to_sheet(detailedData);
+    utils.book_append_sheet(workbook, ws4, "Detailed Transactions");
 
     writeFile(
-      // Change XLSX.writeFile to writeFile
       workbook,
       `financial_report_${startDate?.toISOString().split("T")[0]}_${
         endDate?.toISOString().split("T")[0]
