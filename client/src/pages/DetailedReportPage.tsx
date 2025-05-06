@@ -94,7 +94,7 @@ function DetailedReportPage() {
       }
       return acc;
     }, {} as Record<string, number>);
-
+    console.log("statutoryComponents", statutoryComponents);
     return [
       {
         srno: "A",
@@ -150,7 +150,7 @@ function DetailedReportPage() {
           {
             srno: "6",
             details: "CGST/SGST/IGST",
-            amount: statutoryComponents["CGST/SGST/IGST"] || 0,
+            amount: statutoryComponents["CGST/ SGST / IGST"] || 0,
           },
           {
             srno: "7",
