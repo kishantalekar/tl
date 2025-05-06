@@ -278,7 +278,7 @@ function DetailedReportPage() {
       fixedExpenses + variableExpensesExecution + variableExpensesStatutory;
     const grossProfit = salesValue - totalExpenses;
     const directorRemuneration = grossProfit * 0.1;
-    const corporateTax = (grossProfit - directorRemuneration) * 0.3;
+    const corporateTax = grossProfit * 0.3;
     const netProfit = grossProfit - directorRemuneration - corporateTax;
 
     return [
